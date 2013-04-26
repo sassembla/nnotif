@@ -12,11 +12,11 @@
 		1391EF09172A54E50098BC56 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1391EF08172A54E50098BC56 /* main.m */; };
 		1391EF0D172A54E50098BC56 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 1391EF0B172A54E50098BC56 /* Credits.rtf */; };
 		1391EF10172A54E50098BC56 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1391EF0F172A54E50098BC56 /* AppDelegate.m */; };
-		1391EF13172A54E50098BC56 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1391EF11172A54E50098BC56 /* MainMenu.xib */; };
 		1391EF1B172A54E60098BC56 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1391EF1A172A54E60098BC56 /* SenTestingKit.framework */; };
 		1391EF1C172A54E60098BC56 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1391EEFC172A54E50098BC56 /* Cocoa.framework */; };
 		1391EF24172A54E60098BC56 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1391EF22172A54E60098BC56 /* InfoPlist.strings */; };
 		1391EF27172A54E60098BC56 /* nnotifTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1391EF26172A54E60098BC56 /* nnotifTests.m */; };
+		1391EF32172A56560098BC56 /* nnotif.m in Sources */ = {isa = PBXBuildFile; fileRef = 1391EF31172A56560098BC56 /* nnotif.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,13 +42,14 @@
 		1391EF0C172A54E50098BC56 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		1391EF0E172A54E50098BC56 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1391EF0F172A54E50098BC56 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		1391EF12172A54E50098BC56 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		1391EF19172A54E60098BC56 /* nnotifTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = nnotifTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1391EF1A172A54E60098BC56 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		1391EF21172A54E60098BC56 /* nnotifTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "nnotifTests-Info.plist"; sourceTree = "<group>"; };
 		1391EF23172A54E60098BC56 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1391EF25172A54E60098BC56 /* nnotifTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nnotifTests.h; sourceTree = "<group>"; };
 		1391EF26172A54E60098BC56 /* nnotifTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = nnotifTests.m; sourceTree = "<group>"; };
+		1391EF30172A56560098BC56 /* nnotif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nnotif.h; sourceTree = "<group>"; };
+		1391EF31172A56560098BC56 /* nnotif.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = nnotif.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,7 +117,6 @@
 			children = (
 				1391EF0E172A54E50098BC56 /* AppDelegate.h */,
 				1391EF0F172A54E50098BC56 /* AppDelegate.m */,
-				1391EF11172A54E50098BC56 /* MainMenu.xib */,
 				1391EF03172A54E50098BC56 /* Supporting Files */,
 			);
 			path = nnotif;
@@ -130,6 +130,8 @@
 				1391EF08172A54E50098BC56 /* main.m */,
 				1391EF0A172A54E50098BC56 /* nnotif-Prefix.pch */,
 				1391EF0B172A54E50098BC56 /* Credits.rtf */,
+				1391EF30172A56560098BC56 /* nnotif.h */,
+				1391EF31172A56560098BC56 /* nnotif.m */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -226,7 +228,6 @@
 			files = (
 				1391EF07172A54E50098BC56 /* InfoPlist.strings in Resources */,
 				1391EF0D172A54E50098BC56 /* Credits.rtf in Resources */,
-				1391EF13172A54E50098BC56 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -263,6 +264,7 @@
 			files = (
 				1391EF09172A54E50098BC56 /* main.m in Sources */,
 				1391EF10172A54E50098BC56 /* AppDelegate.m in Sources */,
+				1391EF32172A56560098BC56 /* nnotif.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -299,14 +301,6 @@
 				1391EF0C172A54E50098BC56 /* en */,
 			);
 			name = Credits.rtf;
-			sourceTree = "<group>";
-		};
-		1391EF11172A54E50098BC56 /* MainMenu.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				1391EF12172A54E50098BC56 /* en */,
-			);
-			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
 		1391EF22172A54E60098BC56 /* InfoPlist.strings */ = {
