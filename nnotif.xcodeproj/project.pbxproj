@@ -46,7 +46,6 @@
 		1391EF1A172A54E60098BC56 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		1391EF21172A54E60098BC56 /* nnotifTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "nnotifTests-Info.plist"; sourceTree = "<group>"; };
 		1391EF23172A54E60098BC56 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		1391EF25172A54E60098BC56 /* nnotifTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nnotifTests.h; sourceTree = "<group>"; };
 		1391EF26172A54E60098BC56 /* nnotifTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = nnotifTests.m; sourceTree = "<group>"; };
 		1391EF30172A56560098BC56 /* nnotif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nnotif.h; sourceTree = "<group>"; };
 		1391EF31172A56560098BC56 /* nnotif.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = nnotif.m; sourceTree = "<group>"; };
@@ -139,7 +138,6 @@
 		1391EF1F172A54E60098BC56 /* nnotifTests */ = {
 			isa = PBXGroup;
 			children = (
-				1391EF25172A54E60098BC56 /* nnotifTests.h */,
 				1391EF26172A54E60098BC56 /* nnotifTests.m */,
 				1391EF20172A54E60098BC56 /* Supporting Files */,
 			);
@@ -446,6 +444,7 @@
 				1391EF2C172A54E60098BC56 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		1391EF2D172A54E60098BC56 /* Build configuration list for PBXNativeTarget "nnotifTests" */ = {
 			isa = XCConfigurationList;
@@ -454,6 +453,7 @@
 				1391EF2F172A54E60098BC56 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
