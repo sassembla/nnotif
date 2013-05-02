@@ -8,22 +8,24 @@
 
 #import <Cocoa/Cocoa.h>
 
-#define DEFINE_DEBUG    (@"-d")
 
-#define DEFINE_TARGET   (@"-t")
+#define KEY_TARGET   (@"-t")
 
-#define DEFINE_KEY      (@"-k")
-#define DEFAULT_KEY     (@"message")
+#define KEY_MESSAGEKEY      (@"-k")
+#define DEFAULT_MESSAGEKEY     (@"message")
 
-#define DEFINE_INPUT    (@"-i")
+#define KEY_INPUT    (@"-i")
+#define KEY_OUTPUT   (@"-o")
+
+#define KEY_VERSION  (@"-v")
+
+#define VERSION     (@"0.8.0")
+
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
-@property (assign) IBOutlet NSWindow *window;
-- (void) setArgs:(NSDictionary * )argsDict;
+- (id)initWithArgs:(NSDictionary * )argsDict;
 
 - (void) run;
-- (NSArray * ) result;
 
-- (void) closeWithCode:(int)errorCode;
 @end

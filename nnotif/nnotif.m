@@ -16,11 +16,6 @@
 
 int NSApplicationMain(int argc, const char *argv[]) {
     @autoreleasepool {
-        AppDelegate * delegate = [[AppDelegate alloc] init];
-        
-        NSApplication * application = [NSApplication sharedApplication];
-        [application setDelegate:delegate];
-        
         NSMutableArray * keyAndValueStrArray = [[NSMutableArray alloc]init];
         
         for (int i = 0; i < argc; i++) {
@@ -52,9 +47,17 @@ int NSApplicationMain(int argc, const char *argv[]) {
             }
         }
         
-        [delegate setArgs:argsDict];
+        if (argsDict[KEY_TARGET]) {
+            AppDelegate * delegate = [[AppDelegate alloc] initWithArgs:argsDict];
+            [delegate run];
+        } else {
+            AppDelegate * delegate = [[AppDelegate alloc]init];
+            NSApplication * application = [NSApplication sharedApplication];
+            [application setDelegate:delegate];
+            
+            [NSApp run];
+        }
         
-        [NSApp run];
         return 0;
     }
     

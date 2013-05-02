@@ -10,19 +10,44 @@
 #import "AppDelegate.h"
 
 #define TEST_TARGET     (@"TEST_TARGET_2013/04/28 10:23:16")
+
 #define TEST_MESSAGE    (@"TEST_MESSAGE_2013/04/28 20:51:50")
+#define TEST_MESSAGE_HEADER (@"2013/05/02 14:15:13_")
+
 #define TEST_KEY        (@"TEST_KEY_2013/04/28 21:22:47")
+
+
+#define NNOTIF (@"./app/nnotif")
+
+#define TEST_OUTPUT (@"/Users/sassembla/Desktop/test.txt")
+
+
+@interface TestDistNotificationSender : NSObject @end
+@implementation TestDistNotificationSender
+
+- (void) sendNotification:(NSString * )identity withMessage:(NSString * )message withKey:(NSString * )key {
+    
+    NSArray * clArray = @[@"-t", identity, @"-k", key, @"-i", message, @"-o", TEST_OUTPUT];
+    
+    NSTask * task1 = [[NSTask alloc] init];
+    [task1 setLaunchPath:NNOTIF];
+    [task1 setArguments:clArray];
+    [task1 launch];
+    [task1 waitUntilExit];
+    
+    //待つ
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+}
+@end
+
+
+
 @interface nnotifTests : SenTestCase
 
 @end
 
 @implementation nnotifTests {
     AppDelegate * delegate;
-}
-
-- (void) setUp {
-    [super setUp];
-    delegate = [[AppDelegate alloc] init];
 }
 
 - (void) tearDown {
@@ -34,87 +59,153 @@
 /**
  コマンドラインだけの処理、あらゆるinが無い。
  */
-- (void) testNoInput {
-    [delegate setArgs:@{
-        DEFINE_TARGET:TEST_TARGET,
-         DEFINE_DEBUG:@"",
-         DEFINE_INPUT:TEST_MESSAGE}
+- (void) testNoInputAsApp {
+    
+    delegate = [[AppDelegate alloc] initWithArgs:@{
+        KEY_TARGET:TEST_TARGET,
+         KEY_INPUT:TEST_MESSAGE}
      ];
     
     [delegate run];
     
-    //デバッグありなので、resultが取得できるはず
-    NSArray * result = [delegate result];
-    
-    //resultには、TEST_MESSAGEが入っている筈
-    STAssertNotNil(result, @"result is nil");
-    STAssertTrue([result count] == 1, @"not match, %d",[result count]);
-    STAssertTrue([[result objectAtIndex:0][DEFAULT_KEY] isEqualToString:TEST_MESSAGE], @"not match");
+    //到着を確認する手段が無い
 }
 
-- (void) testNoInput_withKey {
-    [delegate setArgs:@{
-        DEFINE_TARGET:TEST_TARGET,
-         DEFINE_DEBUG:@"",
-         DEFINE_INPUT:TEST_MESSAGE,
-           DEFINE_KEY:TEST_KEY
+/**
+ キー指定あり
+ */
+- (void) testNoInputAsApp_withKey {
+    
+    delegate = [[AppDelegate alloc] initWithArgs:@{
+        KEY_TARGET:TEST_TARGET,
+         KEY_INPUT:TEST_MESSAGE,
+           KEY_MESSAGEKEY:TEST_KEY
         }
      ];
     
     [delegate run];
     
-    //デバッグありなので、resultが取得できるはず
-    NSArray * result = [delegate result];
-    
-    //resultには、TEST_MESSAGEが入っている筈
-    STAssertNotNil(result, @"result is nil");
-    STAssertTrue([result count] == 1, @"not match, %d",[result count]);
-    STAssertTrue([[result objectAtIndex:0][TEST_KEY] isEqualToString:TEST_MESSAGE], @"not match");
+    //到着を確認する手段が無い
 }
 
-
-// 入力を受けるためには、全体をNSTaskで組んで実行するとかしないといけない。これは面倒くさい。
+/**
+ 固定内容の出力あり
+ 定数を出力する
+ */
+- (void) testOutputAsApp {
+    delegate = [[AppDelegate alloc] initWithArgs:@{
+                                      KEY_TARGET:TEST_TARGET,
+                                       KEY_INPUT:TEST_MESSAGE,
+                                      KEY_OUTPUT:TEST_OUTPUT
+                }
+                ];
+    
+    [delegate run];
+    
+    
+    //起動している筈なので、ファイルが書き出されている筈
+    NSFileHandle * handle = [NSFileHandle fileHandleForReadingAtPath:TEST_OUTPUT];
+    STAssertNotNil(handle, @"handle is nil");
+    
+    NSData * data = [handle readDataToEndOfFile];
+    NSString * string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    //logがあるはず
+    NSArray * array = [string componentsSeparatedByString:@"\n"];
+    
+    //message :sent to target: key:
+    NSString * expected = [[NSString alloc]initWithFormat:@"%@:sent to target:%@ key:%@", TEST_MESSAGE, TEST_TARGET, DEFAULT_MESSAGEKEY];
+    STAssertTrue([array containsObject:expected], @"not contained");
+}
 
 /**
- stdin
- 標準入力を受ける。
- 適当な文字列データを送り込んでみる。
+ 固定内容の出力あり
+ 変化する値を出力する
  */
-//- (void) testReceiveStdinShort {
-//    NSArray * clArray = @[@"-d", @"-t", TEST_TARGET];
-//    NSPipe * s_in = [[NSPipe alloc] init];
-//    NSPipe * s_out = [[NSPipe alloc] init];
-//
-//    NSTask * task1 = [[NSTask alloc] init];
-//    [task1 setLaunchPath:TEST_NNOTIF_BINPATH];
-//    [task1 setArguments:clArray];
-//    [task1 setStandardInput:s_in];
-//    [task1 setStandardOutput:s_out];
-//
-//    
-//    
-//    //データを送り込める。これで、outputがどうなるか、っていうのが判るか。いつ発動するんだろうコレ、、あとstdin扱いになるのかな、、、
-//    [[[task1 standardInput] fileHandleForWriting] writeData:[@"test" dataUsingEncoding:NSUTF8StringEncoding]];
-//
-//    [task1 launch];
-//    [task1 waitUntilExit];
+- (void) testOutputAsApp2 {
+    NSString * message = [[NSString alloc]initWithFormat:@"%@%@", TEST_MESSAGE_HEADER, [[NSDate alloc] init]];
+    delegate = [[AppDelegate alloc] initWithArgs:@{
+                                      KEY_TARGET:TEST_TARGET,
+                                       KEY_INPUT:message,
+                                      KEY_OUTPUT:TEST_OUTPUT
+                }
+                ];
+    
+    [delegate run];
     
     
-//    NSTask * task = [NSTask a]よく考えたらテストできない、、NSTask全開だね。
-//    [delegate setArgs:@{
-//     @"-d":@"",
-//     @"-t":TEST_TARGET
-//     }];
-//    
-//    //結果が出ている筈。
-//    [delegate run];
-//    
-//    NSArray * result = [delegate result];
-//    STFail(@"Unit tests are not implemented yet in nnotifTests");
-//}
+    //起動している筈なので、ファイルが書き出されている筈
+    NSFileHandle * handle = [NSFileHandle fileHandleForReadingAtPath:TEST_OUTPUT];
+    STAssertNotNil(handle, @"handle is nil");
+    
+    NSData * data = [handle readDataToEndOfFile];
+    NSString * string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    //logがあるはず
+    NSArray * array = [string componentsSeparatedByString:@"\n"];
+    
+    NSString * expected = [[NSString alloc]initWithFormat:@"%@:sent to target:%@ key:%@", message, TEST_TARGET, DEFAULT_MESSAGEKEY];
+    STAssertTrue([array containsObject:expected], @"not contained");
+}
 
+- (void) testVersionPrint {
+    NSString * message = [[NSString alloc]initWithFormat:@"%@%@", TEST_MESSAGE_HEADER, [[NSDate alloc] init]];
+    delegate = [[AppDelegate alloc] initWithArgs:@{
+                                     KEY_VERSION:@"",
+                                      KEY_TARGET:TEST_TARGET,
+                                       KEY_INPUT:message,
+                                      KEY_OUTPUT:TEST_OUTPUT
+                }
+                ];
+    
+    [delegate run];
+}
 
+///////コマンドラインとしてのテスト
 
+/**
+ 固定メッセージ
+ */
+- (void) testOutput {
+    TestDistNotificationSender * sender = [[TestDistNotificationSender alloc] init];
+    [sender sendNotification:TEST_TARGET withMessage:TEST_MESSAGE withKey:TEST_KEY];
+    
+    //起動している筈なので、ファイルが書き出されている筈
+    NSFileHandle * handle = [NSFileHandle fileHandleForReadingAtPath:TEST_OUTPUT];
+    STAssertNotNil(handle, @"handle is nil");
+    
+    NSData * data = [handle readDataToEndOfFile];
+    NSString * string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    //logがあるはず
+    NSArray * array = [string componentsSeparatedByString:@"\n"];
+    
+    NSString * expected = [[NSString alloc]initWithFormat:@"%@:sent to target:%@ key:%@", TEST_MESSAGE, TEST_TARGET, TEST_KEY];
+    STAssertTrue([array containsObject:expected], @"not contained, %@", array);
+}
+
+/**
+ 可変メッセージ
+ */
+- (void) testOutput2 {
+    NSString * message = [[NSString alloc]initWithFormat:@"%@%@", TEST_MESSAGE_HEADER, [[NSDate alloc] init]];
+    
+    TestDistNotificationSender * sender = [[TestDistNotificationSender alloc] init];
+    [sender sendNotification:TEST_TARGET withMessage:message withKey:TEST_KEY];
+    
+    //起動している筈なので、ファイルが書き出されている筈
+    NSFileHandle * handle = [NSFileHandle fileHandleForReadingAtPath:TEST_OUTPUT];
+    STAssertNotNil(handle, @"handle is nil");
+    
+    NSData * data = [handle readDataToEndOfFile];
+    NSString * string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    //logがあるはず
+    NSArray * array = [string componentsSeparatedByString:@"\n"];
+    
+    NSString * expected = [[NSString alloc]initWithFormat:@"%@:sent to target:%@ key:%@", message, TEST_TARGET, TEST_KEY];
+    STAssertTrue([array containsObject:expected], @"not contained, %@", array);
+}
 
 
 
