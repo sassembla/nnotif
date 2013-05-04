@@ -17,14 +17,20 @@
 #define KEY_INPUT    (@"-i")
 #define KEY_OUTPUT   (@"-o")
 
+#define KEY_DONT_SPLIT_MESSAGE_BY_LINE  (@"--dontsplitbyline")
+#define KEY_IGNORE_BLANKLINE    (@"--ignorebl")
+
 #define KEY_VERSION  (@"-v")
 
-#define VERSION     (@"0.8.0")
+
+#define VERSION     (@"0.8.1")
 
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
 - (id)initWithArgs:(NSDictionary * )argsDict;
+
+- (long) logWriteCount;
 
 - (void) run;
 
