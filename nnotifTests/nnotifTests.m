@@ -20,15 +20,26 @@
 
 #define NNOTIF (@"./app/nnotif")
 
-#define TEST_OUTPUT (@"/Users/sassembla/Desktop/test.txt")
+#define TEST_FILEPATH_SINGLELINE    (@"./testresource/inputFileSingleLine.txt")
+#define TEST_FILEPATH_MULTILINE     (@"./testresource/inputFileMultiLine.txt")
+#define TEST_FILEPATH_MULTILINE_2TABS    (@"./testresource/inputFileMultiLine_with2Tabs.txt")
+#define TEST_FILEPATH_MULTILINE_4TABS    (@"./testresource/inputFileMultiLine_with4Tabs.txt")
+
+#define TEST_2TAB   (@"2")
+#define TEST_4TAB   (@"4")
+
+
+#define TEST_OUTPUT (@"./test.log")
 
 
 @interface TestDistNotificationSender : NSObject @end
 @implementation TestDistNotificationSender
 
 - (void) sendNotification:(NSString * )identity withMessage:(NSString * )message withKey:(NSString * )key withOptions:(NSArray * )options {
-    
-    NSArray * clArray = @[@"-t", identity, @"-k", key, @"-i", message];
+
+    NSArray * clArray;
+    if (message) clArray = @[@"-t", identity, @"-k", key, @"-i", message];
+    else clArray = @[@"-t", identity, @"-k", key];
     
     NSArray * totalParamArray = [clArray arrayByAddingObjectsFromArray:options];
     
@@ -247,9 +258,175 @@
     STAssertTrue([array count] == 1, @"not match, %d", [array count]);
 }
 
+/**
+ 特定ファイルを読み込み、その内容をメッセージとして一発で飛ばす
+ */
+- (void) testInputFromFile_SingleLineAsApp {
+    delegate = [[AppDelegate alloc] initWithArgs:@{
+                                      KEY_TARGET:TEST_TARGET,
+                                        KEY_FILE:TEST_FILEPATH_SINGLELINE,
+                                      KEY_OUTPUT:TEST_OUTPUT
+                }
+                ];
+    
+    [delegate run];
+
+    
+    //メッセージが飛べば、logに出る筈
+    //起動している筈なので、ファイルが書き出されている筈
+    NSFileHandle * handle = [NSFileHandle fileHandleForReadingAtPath:TEST_OUTPUT];
+    STAssertNotNil(handle, @"handle is nil");
+    
+    NSData * data = [handle readDataToEndOfFile];
+    NSString * string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    //logがあるはず
+    NSArray * array = [string componentsSeparatedByString:@"\n"];
+    
+    //改行が無く、logが1つだけあるはず
+    STAssertTrue([array count] == 1, @"not match, %d", [array count]);
+}
+
+/**
+ 複数行ある
+ 特定ファイルを読み込み、その内容をメッセージとして一発で飛ばす
+ */
+- (void) testInputFromFile_MultiLineAsApp {
+    delegate = [[AppDelegate alloc] initWithArgs:@{
+                                      KEY_TARGET:TEST_TARGET,
+                                        KEY_FILE:TEST_FILEPATH_MULTILINE,
+                                      KEY_OUTPUT:TEST_OUTPUT
+                }
+                ];
+    
+    [delegate run];
+    
+    
+    //メッセージが飛べば、logに出る筈
+    //起動している筈なので、ファイルが書き出されている筈
+    NSFileHandle * handle = [NSFileHandle fileHandleForReadingAtPath:TEST_OUTPUT];
+    STAssertNotNil(handle, @"handle is nil");
+    
+    NSData * data = [handle readDataToEndOfFile];
+    NSString * string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    //logがあるはず
+    NSArray * array = [string componentsSeparatedByString:@"\n"];
+    
+    //改行分だけメッセージが流れる
+    STAssertTrue([array count] == 5, @"not match, %d", [array count]);
+}
+
+/**
+ 複数行ある特定ファイルを読み込み、その内容をメッセージとして一発で飛ばす
+ 改行そのままメッセージ化のオプション付き
+ */
+- (void) testInputFromFile_MultiLineWithDontSplitMessageByLineAsApp {
+    delegate = [[AppDelegate alloc] initWithArgs:@{
+                                      KEY_TARGET:TEST_TARGET,
+                                        KEY_FILE:TEST_FILEPATH_MULTILINE,
+                                      KEY_OUTPUT:TEST_OUTPUT,
+                  KEY_DONT_SPLIT_MESSAGE_BY_LINE:@""
+                }
+                ];
+    
+    [delegate run];
+    
+    
+    //メッセージが飛べば、logに出る筈
+    //起動している筈なので、ファイルが書き出されている筈
+    NSFileHandle * handle = [NSFileHandle fileHandleForReadingAtPath:TEST_OUTPUT];
+    STAssertNotNil(handle, @"handle is nil");
+    
+    NSData * data = [handle readDataToEndOfFile];
+    NSString * string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    //logがあるはず
+    NSArray * array = [string componentsSeparatedByString:@"\n"];
+    
+    //改行が無視されるので、1行分logが出る、が、中身が改行含みなので5
+    STAssertTrue([array count] == 5, @"not match, %d", [array count]);
+    
+    //書き込み回数は1
+    STAssertTrue([delegate logWriteCount] == 1, @"not match, %d", [delegate logWriteCount]);
+}
+
+/**
+ タブが含まれているファイル/メッセージ読み込み
+ タブはspaceの連続だったり、文字コードだったりすると思うので、入力されたものを使う。
+ 入力された物を1単位として、入力の中からそのコードを抹消する。
+ */
+- (void) testIgnore2TabsAsApp {
+    //2spaceをタブとして扱う
+    delegate = [[AppDelegate alloc] initWithArgs:@{
+                                      KEY_TARGET:TEST_TARGET,
+                                        KEY_FILE:TEST_FILEPATH_MULTILINE_2TABS,
+                                      KEY_OUTPUT:TEST_OUTPUT,
+                                 KEY_IGNORE_TABS:TEST_2TAB//2spaces
+                }
+                ];
+    
+    [delegate run];
+    
+    //メッセージが飛べば、logに出る筈
+    //起動している筈なので、ファイルが書き出されている筈
+    NSFileHandle * handle = [NSFileHandle fileHandleForReadingAtPath:TEST_OUTPUT];
+    STAssertNotNil(handle, @"handle is nil");
+    
+    NSData * data = [handle readDataToEndOfFile];
+    NSString * string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    //logがあるはず
+    NSArray * array = [string componentsSeparatedByString:@"\n"];
+    
+    //3行あり、
+    STAssertTrue([array count] == 3, @"not match, %d", [array count]);
+    
+    for (NSString * line in array) {
+        STAssertFalse([line hasPrefix:@"  "], @"contains");
+    }
+}
+
+- (void) testIgnore4TabsAsApp {
+    //4spaceをタブとして扱う
+    delegate = [[AppDelegate alloc] initWithArgs:@{
+                                      KEY_TARGET:TEST_TARGET,
+                                        KEY_FILE:TEST_FILEPATH_MULTILINE_4TABS,
+                                      KEY_OUTPUT:TEST_OUTPUT,
+                                 KEY_IGNORE_TABS:TEST_4TAB//4spaces
+                }
+                ];
+    
+    [delegate run];
+    
+    //メッセージが飛べば、logに出る筈
+    //起動している筈なので、ファイルが書き出されている筈
+    NSFileHandle * handle = [NSFileHandle fileHandleForReadingAtPath:TEST_OUTPUT];
+    STAssertNotNil(handle, @"handle is nil");
+    
+    NSData * data = [handle readDataToEndOfFile];
+    NSString * string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    //logがあるはず
+    NSArray * array = [string componentsSeparatedByString:@"\n"];
+    
+    //3行あり、
+    STAssertTrue([array count] == 3, @"not match, %d", [array count]);
+    
+    
+    for (NSString * line in array) {
+        STAssertFalse([line hasPrefix:@"    "], @"contains");
+    }
+}
 
 
+
+
+///////////////////////////////////////////////////////////////////
 ///////コマンドラインとしてのテスト
+///////////////////////////////////////////////////////////////////
+
+
 
 /**
  固定メッセージ
@@ -364,5 +541,144 @@
 }
 
 
+/**
+ 特定ファイルを読み込み、その内容をメッセージとして一発で飛ばす
+ */
+- (void) testInputFromFile_SingleLine {
+    
+    TestDistNotificationSender * sender = [[TestDistNotificationSender alloc] init];
+    [sender sendNotification:TEST_TARGET withMessage:nil withKey:TEST_KEY withOptions:
+     @[KEY_OUTPUT, TEST_OUTPUT,
+     KEY_FILE, TEST_FILEPATH_SINGLELINE]];
+    
+    
+    //メッセージが飛べば、logに出る筈
+    //起動している筈なので、ファイルが書き出されている筈
+    NSFileHandle * handle = [NSFileHandle fileHandleForReadingAtPath:TEST_OUTPUT];
+    STAssertNotNil(handle, @"handle is nil");
+    
+    NSData * data = [handle readDataToEndOfFile];
+    NSString * string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    //logがあるはず
+    NSArray * array = [string componentsSeparatedByString:@"\n"];
+    
+    //改行が無く、logが1つだけあるはず
+    STAssertTrue([array count] == 1, @"not match, %d", [array count]);
+}
+
+/**
+ 複数行ある
+ 特定ファイルを読み込み、その内容をメッセージとして一発で飛ばす
+ */
+- (void) testInputFromFile_MultiLine {
+    TestDistNotificationSender * sender = [[TestDistNotificationSender alloc] init];
+    [sender sendNotification:TEST_TARGET withMessage:nil withKey:TEST_KEY withOptions:
+     @[KEY_OUTPUT, TEST_OUTPUT,
+     KEY_FILE, TEST_FILEPATH_MULTILINE]];
+    
+    
+    //メッセージが飛べば、logに出る筈
+    //起動している筈なので、ファイルが書き出されている筈
+    NSFileHandle * handle = [NSFileHandle fileHandleForReadingAtPath:TEST_OUTPUT];
+    STAssertNotNil(handle, @"handle is nil");
+    
+    NSData * data = [handle readDataToEndOfFile];
+    NSString * string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    //logがあるはず
+    NSArray * array = [string componentsSeparatedByString:@"\n"];
+    
+    //改行分だけメッセージが流れる
+    STAssertTrue([array count] == 5, @"not match, %d", [array count]);
+}
+
+/**
+ 複数行ある特定ファイルを読み込み、その内容をメッセージとして一発で飛ばす
+ 改行そのままメッセージ化のオプション付き
+ */
+- (void) testInputFromFile_MultiLineWithDontSplitMessageByLine {
+    TestDistNotificationSender * sender = [[TestDistNotificationSender alloc] init];
+    [sender sendNotification:TEST_TARGET withMessage:nil withKey:TEST_KEY withOptions:
+     @[KEY_OUTPUT, TEST_OUTPUT,
+     KEY_FILE, TEST_FILEPATH_MULTILINE, KEY_DONT_SPLIT_MESSAGE_BY_LINE]];
+    
+    
+    //メッセージが飛べば、logに出る筈
+    //起動している筈なので、ファイルが書き出されている筈
+    NSFileHandle * handle = [NSFileHandle fileHandleForReadingAtPath:TEST_OUTPUT];
+    STAssertNotNil(handle, @"handle is nil");
+    
+    NSData * data = [handle readDataToEndOfFile];
+    NSString * string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    //logがあるはず
+    NSArray * array = [string componentsSeparatedByString:@"\n"];
+    
+    //改行が無視されるので、1行分logが出る、が、中身が改行含みなので5
+    STAssertTrue([array count] == 5, @"not match, %d", [array count]);
+    
+    //書き込み回数は確かめようが無い
+}
+
+
+/**
+ タブが含まれているファイル/メッセージ読み込み
+ タブはspaceの連続だったり、文字コードだったりすると思うので、入力されたものを使う。
+ 入力された物を1単位として、入力の中からそのコードを抹消する。
+ */
+- (void) testIgnore2Tabs {
+    TestDistNotificationSender * sender = [[TestDistNotificationSender alloc] init];
+    [sender sendNotification:TEST_TARGET withMessage:nil withKey:TEST_KEY withOptions:
+     @[KEY_OUTPUT, TEST_OUTPUT,
+     KEY_FILE, TEST_FILEPATH_MULTILINE_2TABS,
+     KEY_IGNORE_TABS, TEST_2TAB]];
+    
+    //メッセージが飛べば、logに出る筈
+    //起動している筈なので、ファイルが書き出されている筈
+    NSFileHandle * handle = [NSFileHandle fileHandleForReadingAtPath:TEST_OUTPUT];
+    STAssertNotNil(handle, @"handle is nil");
+    
+    NSData * data = [handle readDataToEndOfFile];
+    NSString * string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    //logがあるはず
+    NSArray * array = [string componentsSeparatedByString:@"\n"];
+    
+    //3行あり、
+    STAssertTrue([array count] == 3, @"not match, %d", [array count]);
+    
+    for (NSString * line in array) {
+        STAssertFalse([line hasPrefix:@"  "], @"contains");
+    }
+}
+
+- (void) testIgnore4Tabs {
+    TestDistNotificationSender * sender = [[TestDistNotificationSender alloc] init];
+    [sender sendNotification:TEST_TARGET withMessage:nil withKey:TEST_KEY withOptions:
+     @[KEY_OUTPUT, TEST_OUTPUT,
+     KEY_FILE, TEST_FILEPATH_MULTILINE_4TABS,
+     KEY_IGNORE_TABS, TEST_4TAB
+     ]];
+    
+    //メッセージが飛べば、logに出る筈
+    //起動している筈なので、ファイルが書き出されている筈
+    NSFileHandle * handle = [NSFileHandle fileHandleForReadingAtPath:TEST_OUTPUT];
+    STAssertNotNil(handle, @"handle is nil");
+    
+    NSData * data = [handle readDataToEndOfFile];
+    NSString * string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    //logがあるはず
+    NSArray * array = [string componentsSeparatedByString:@"\n"];
+    
+    //3行あり、
+    STAssertTrue([array count] == 3, @"not match, %d", [array count]);
+    
+    
+    for (NSString * line in array) {
+        STAssertFalse([line hasPrefix:@"    "], @"contains");
+    }
+}
 
 @end

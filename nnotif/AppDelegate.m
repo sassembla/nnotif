@@ -19,6 +19,8 @@
     bool m_ignoreBlankLine;
     bool m_dontSplitByLine;
     
+    NSNumber * m_ignoreTabsCount;
+    
     NSDistributedNotificationCenter * m_center;
     
     long m_writeCount;
@@ -35,11 +37,32 @@
         else m_key = DEFAULT_MESSAGEKEY;
         
         
+        //キーのコンフリクトがある場合退場
+        if (argsDict[KEY_INPUT] && argsDict[KEY_FILE]) NSAssert2(false, @"cannot use key %@ with %@", KEY_INPUT, KEY_FILE);
+        
+        
         if (argsDict[KEY_INPUT]) m_input = [[NSString alloc]initWithString:argsDict[KEY_INPUT]];
+        
         if (argsDict[KEY_OUTPUT]) {
             [self setOutput:argsDict[KEY_OUTPUT]];
             
             m_output = [[NSString alloc]initWithString:argsDict[KEY_OUTPUT]];
+        }
+        
+        if (argsDict[KEY_IGNORE_TABS]) {
+            m_ignoreTabsCount = [NSNumber numberWithInt:[argsDict[KEY_IGNORE_TABS] intValue]];
+        }
+        
+        if (argsDict[KEY_FILE]) {
+            //存在しても何も言わないので、先に存在チェック
+            NSFileHandle * readHandle = [NSFileHandle fileHandleForReadingAtPath:argsDict[KEY_FILE]];
+            
+            //ファイルが存在しているか
+            if (readHandle) {
+                m_input = [self loadLinesFromFile:readHandle];
+            } else {
+                NSAssert2(false, @"couldn't find file of %@ :%@", KEY_FILE, argsDict[KEY_FILE]);
+            }
         }
         
         m_dontSplitByLine = false;
@@ -81,6 +104,16 @@
  DistNotifへのメッセージの投入
  */
 - (void) send:(NSString * )message {
+
+    //タブ消去
+    if (m_ignoreTabsCount) {
+        NSMutableString * ignoreTargetSpaces = [[NSMutableString alloc]init];
+        for (int i = 0; i < [m_ignoreTabsCount intValue]; i++) {
+            [ignoreTargetSpaces appendString:DEFINE_SPACE];
+        }
+        
+        message = [message stringByReplacingOccurrencesOfString:ignoreTargetSpaces withString:@""];
+    }
     
     //改行でメッセージを分割するかしないか
     if (m_dontSplitByLine) {
@@ -138,6 +171,15 @@
         m_writeHandle = [NSFileHandle fileHandleForWritingAtPath:path];
     }
 }
+
+/**
+ ハンドルから文字列を読み出し文字列を返す
+ */
+- (NSString * ) loadLinesFromFile:(NSFileHandle * )readHandle {
+    NSData * data = [readHandle readDataToEndOfFile];
+    return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+}
+
 
 - (void) writeLogline:(NSString * )log {
     if (m_writeHandle) {
