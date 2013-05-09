@@ -1,9 +1,9 @@
 #nnotif
-###Emit NSDistributedNotification from command line.
+####Emit NSDistributedNotification from command line.
 command line tool for Mac  
 version 0.8.2
 
-###SAMPLE
+
 ####emit NSDistributedNotification with pipe
 
 	//send output of tail to TARGET receiver.
@@ -15,7 +15,7 @@ version 0.8.2
 	nnotif -t TARGET -i MyMessage
 
 
-###OPTIONS
+####OPTIONS
 
 set TARGET of Notification
 
@@ -59,7 +59,7 @@ VERSION
 	-v
 
 
-##USAGE
+####USAGE
 
 	nnotif -t TARGET -k KEY -o ./nnotif.log -f ./messageFile.txt 
 	
@@ -86,7 +86,7 @@ will generate 5 NSDistributedNotification-post.
 
 
 
-##INSTALL
+####INSTALL
 * 1.clone this repository.
 * 2.right-click nnotif.app > show package
 * 3.get nnotif from /Contents/MacOS/nnotif
