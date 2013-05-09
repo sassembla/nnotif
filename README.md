@@ -1,5 +1,6 @@
 #nnotif
-###emit NSDistributedNotification command line tool for Mac
+###Emit NSDistributedNotification from command line.
+command line tool for Mac  
 version 0.8.2
 
 
