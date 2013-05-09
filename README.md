@@ -50,7 +50,7 @@ ignore blank line. blank line will not send.
 	--ignorebl
 
 IGNORE_TABS                 
-ignore tabs in message. e.g. if message contains 4-space-tab, will erase then notify.
+ignore tabs in message. e.g. if message contains 4-space-tab, will be erased then notify.
 
 	--ignoretabs 4
 
