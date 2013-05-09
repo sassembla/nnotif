@@ -59,7 +59,7 @@ with "messageFile.txt"
 	To_ 
 	You
 	
-will generate 5 NSDistributedNotification-post.
+will generate only 1 NSDistributedNotification-post.
 
 	NSDictionary * dict = @{"KEY":@"Message_From_Me_To_You"};
 
