@@ -3,8 +3,19 @@
 command line tool for Mac  
 version 0.8.2
 
+###SAMPLE
+####emit NSDistributedNotification with pipe
 
-###options
+	//send output of tail to TARGET receiver.
+	tail -f something.log | nnotif -t TARGET
+	
+####emit NSDistributedNotification standalone
+
+	//send "MyMessage" to TARGET receiver.
+	nnotif -t TARGET -i MyMessage
+
+
+###OPTIONS
 
 set TARGET of Notification
 
@@ -48,7 +59,7 @@ VERSION
 	-v
 
 
-###usage
+##USAGE
 
 	nnotif -t TARGET -k KEY -o ./nnotif.log -f ./messageFile.txt 
 	
@@ -60,12 +71,24 @@ with "messageFile.txt"
 	To_ 
 	You
 	
-will generate only 1 NSDistributedNotification-post.
+will generate only 1 NSDistributedNotification-post. same as below in Obj-C
 
 	NSDictionary * dict = @{"KEY":@"Message_From_Me_To_You"};
 
     [[NSDistributedNotificationCenter defaultCenter]postNotificationName:TARGET object:nil userInfo:dict deliverImmediately:YES];
 
+if you want to emit NSDistributedNotification each line,
+use --dontsplitbyline option.
 
+	nnotif -t TARGET -k KEY -o ./nnotif.log -f ./messageFile.txt --dontsplitbyline
+
+will generate 5 NSDistributedNotification-post.
+
+
+
+##INSTALL
+* 1.clone this repository.
+* 2.right-click nnotif.app > show package
+* 3.get nnotif from /Contents/MacOS/nnotif
 
 That's all.
