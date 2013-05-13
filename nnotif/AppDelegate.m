@@ -186,9 +186,9 @@
         NSString * formattedMessage;
 
         if (0 < m_writeCount) {
-            formattedMessage = [[NSString alloc] initWithFormat:@"\n%@:sent to target:%@ key:%@", log, m_target, m_key];
+            formattedMessage = [[NSString alloc] initWithFormat:@"\nmessage:%@  sent to target:%@ key:%@", log, m_target, m_key];
         } else {
-            formattedMessage = [[NSString alloc] initWithFormat:@"%@:sent to target:%@ key:%@", log, m_target, m_key];
+            formattedMessage = [[NSString alloc] initWithFormat:@"message:%@    sent to target:%@ key:%@", log, m_target, m_key];
         }
         
         [m_writeHandle writeData:[formattedMessage dataUsingEncoding:NSUTF8StringEncoding]];

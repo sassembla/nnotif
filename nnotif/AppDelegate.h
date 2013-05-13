@@ -28,7 +28,7 @@
 #define KEY_VERSION     (@"-v")
 
 
-#define VERSION         (@"0.8.2")
+#define VERSION         (@"0.8.3")
 
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
