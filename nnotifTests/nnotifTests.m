@@ -30,6 +30,8 @@
 
 
 #define TEST_OUTPUT (@"./test.log")
+#define TEST_OUTPUT_2   (@"./test2.log")
+#define TEST_OUTPUT_2_ORG   (@"./test2_org.log")
 
 
 @interface TestDistNotificationSender : NSObject @end
@@ -107,6 +109,12 @@
  定数を出力する
  */
 - (void) testOutputAsApp {
+    NSTask * task0 = [[NSTask alloc] init];
+    [task0 setLaunchPath:@"/bin/rm"];
+    [task0 setArguments:@[TEST_OUTPUT]];
+    [task0 launch];
+    [task0 waitUntilExit];
+    
     delegate = [[AppDelegate alloc] initWithArgs:@{
                                       KEY_TARGET:TEST_TARGET,
                                        KEY_INPUT:TEST_MESSAGE,
@@ -128,7 +136,7 @@
     NSArray * array = [string componentsSeparatedByString:@"\n"];
     
     //message :sent to target: key:
-    NSString * expected = [[NSString alloc]initWithFormat:@"%@:sent to target:%@ key:%@", TEST_MESSAGE, TEST_TARGET, DEFAULT_MESSAGEKEY];
+    NSString * expected = [[NSString alloc]initWithFormat:@"message:%@    sent to target:%@ key:%@", TEST_MESSAGE, TEST_TARGET, DEFAULT_MESSAGEKEY];
     STAssertTrue([array containsObject:expected], @"not contained");
 }
 
@@ -137,6 +145,12 @@
  変化する値を出力する
  */
 - (void) testOutputAsApp2 {
+    NSTask * task0 = [[NSTask alloc] init];
+    [task0 setLaunchPath:@"/bin/rm"];
+    [task0 setArguments:@[TEST_OUTPUT]];
+    [task0 launch];
+    [task0 waitUntilExit];
+    
     NSString * message = [[NSString alloc]initWithFormat:@"%@%@", TEST_MESSAGE_HEADER, [[NSDate alloc] init]];
     delegate = [[AppDelegate alloc] initWithArgs:@{
                                       KEY_TARGET:TEST_TARGET,
@@ -158,7 +172,7 @@
     //logがあるはず
     NSArray * array = [string componentsSeparatedByString:@"\n"];
     
-    NSString * expected = [[NSString alloc]initWithFormat:@"%@:sent to target:%@ key:%@", message, TEST_TARGET, DEFAULT_MESSAGEKEY];
+    NSString * expected = [[NSString alloc]initWithFormat:@"message:%@    sent to target:%@ key:%@", message, TEST_TARGET, DEFAULT_MESSAGEKEY];
     STAssertTrue([array containsObject:expected], @"not contained");
 }
 
@@ -209,6 +223,12 @@
  改行でのメッセージ分割の無視
  */
 - (void) testDontSplitMessageByLineAsApp {
+    NSTask * task0 = [[NSTask alloc] init];
+    [task0 setLaunchPath:@"/bin/rm"];
+    [task0 setArguments:@[TEST_OUTPUT]];
+    [task0 launch];
+    [task0 waitUntilExit];
+    
     NSString * message = [[NSString alloc]initWithFormat:@"%@%@\n%@%@", TEST_MESSAGE_HEADER, [[NSDate alloc] init], TEST_MESSAGE_HEADER2, [[NSDate alloc] init]];
     delegate = [[AppDelegate alloc] initWithArgs:@{
                                       KEY_TARGET:TEST_TARGET,
@@ -228,6 +248,12 @@
  改行でのメッセージ分割の無視中に空の行を送った場合 & ignoreBlankLine
  */
 - (void) testDontSplitMessageByLineWithBlankLineWithIgnoreBlankLineAsApp {
+    NSTask * task0 = [[NSTask alloc] init];
+    [task0 setLaunchPath:@"/bin/rm"];
+    [task0 setArguments:@[TEST_OUTPUT]];
+    [task0 launch];
+    [task0 waitUntilExit];
+    
     NSString * message = [[NSString alloc]initWithFormat:@"%@%@\n", TEST_MESSAGE_HEADER, [[NSDate alloc] init]];
     delegate = [[AppDelegate alloc] initWithArgs:@{
                                       KEY_TARGET:TEST_TARGET,
@@ -262,6 +288,12 @@
  特定ファイルを読み込み、その内容をメッセージとして一発で飛ばす
  */
 - (void) testInputFromFile_SingleLineAsApp {
+    NSTask * task0 = [[NSTask alloc] init];
+    [task0 setLaunchPath:@"/bin/rm"];
+    [task0 setArguments:@[TEST_OUTPUT]];
+    [task0 launch];
+    [task0 waitUntilExit];
+    
     delegate = [[AppDelegate alloc] initWithArgs:@{
                                       KEY_TARGET:TEST_TARGET,
                                         KEY_FILE:TEST_FILEPATH_SINGLELINE,
@@ -292,6 +324,12 @@
  特定ファイルを読み込み、その内容をメッセージとして一発で飛ばす
  */
 - (void) testInputFromFile_MultiLineAsApp {
+    NSTask * task0 = [[NSTask alloc] init];
+    [task0 setLaunchPath:@"/bin/rm"];
+    [task0 setArguments:@[TEST_OUTPUT]];
+    [task0 launch];
+    [task0 waitUntilExit];
+    
     delegate = [[AppDelegate alloc] initWithArgs:@{
                                       KEY_TARGET:TEST_TARGET,
                                         KEY_FILE:TEST_FILEPATH_MULTILINE,
@@ -322,6 +360,12 @@
  改行そのままメッセージ化のオプション付き
  */
 - (void) testInputFromFile_MultiLineWithDontSplitMessageByLineAsApp {
+    NSTask * task0 = [[NSTask alloc] init];
+    [task0 setLaunchPath:@"/bin/rm"];
+    [task0 setArguments:@[TEST_OUTPUT]];
+    [task0 launch];
+    [task0 waitUntilExit];
+    
     delegate = [[AppDelegate alloc] initWithArgs:@{
                                       KEY_TARGET:TEST_TARGET,
                                         KEY_FILE:TEST_FILEPATH_MULTILINE,
@@ -357,6 +401,12 @@
  入力された物を1単位として、入力の中からそのコードを抹消する。
  */
 - (void) testIgnore2TabsAsApp {
+    NSTask * task0 = [[NSTask alloc] init];
+    [task0 setLaunchPath:@"/bin/rm"];
+    [task0 setArguments:@[TEST_OUTPUT]];
+    [task0 launch];
+    [task0 waitUntilExit];
+    
     //2spaceをタブとして扱う
     delegate = [[AppDelegate alloc] initWithArgs:@{
                                       KEY_TARGET:TEST_TARGET,
@@ -388,6 +438,12 @@
 }
 
 - (void) testIgnore4TabsAsApp {
+    NSTask * task0 = [[NSTask alloc] init];
+    [task0 setLaunchPath:@"/bin/rm"];
+    [task0 setArguments:@[TEST_OUTPUT]];
+    [task0 launch];
+    [task0 waitUntilExit];
+    
     //4spaceをタブとして扱う
     delegate = [[AppDelegate alloc] initWithArgs:@{
                                       KEY_TARGET:TEST_TARGET,
@@ -419,6 +475,44 @@
     }
 }
 
+/**
+ logFileへの記述方式、書き足しに変更
+ */
+- (void) testLogAppendAsApp {
+    NSTask * task0 = [[NSTask alloc] init];
+    [task0 setLaunchPath:@"/bin/rm"];
+    [task0 setArguments:@[TEST_OUTPUT_2]];
+    [task0 launch];
+    [task0 waitUntilExit];
+    
+    NSTask * task1 = [[NSTask alloc] init];
+    [task1 setLaunchPath:@"/bin/cp"];
+    [task1 setArguments:@[TEST_OUTPUT_2_ORG, TEST_OUTPUT_2]];
+    [task1 launch];
+    [task1 waitUntilExit];
+        
+    delegate = [[AppDelegate alloc] initWithArgs:@{
+                                      KEY_TARGET:TEST_TARGET,
+                                        KEY_FILE:TEST_FILEPATH_MULTILINE,//5line
+                                      KEY_OUTPUT:TEST_OUTPUT_2
+                }
+                ];
+    
+    [delegate run];
+    
+    //メッセージが飛べば、logに出る筈
+    NSFileHandle * handle = [NSFileHandle fileHandleForReadingAtPath:TEST_OUTPUT_2];
+    STAssertNotNil(handle, @"handle is nil");
+    
+    NSData * data = [handle readDataToEndOfFile];
+    NSString * string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    //logがあるはず
+    NSArray * array = [string componentsSeparatedByString:@"\n"];
+    
+    //7行
+    STAssertTrue([array count] == 7, @"not match, %d", [array count]);
+}
 
 
 ///////////////////////////////////////////////////////////////////

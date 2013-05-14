@@ -158,17 +158,23 @@
     //存在しても何も言わないので、先に存在チェック
     NSFileHandle * readHandle = [NSFileHandle fileHandleForReadingAtPath:path];
     
+    bool result = false;
+    
     //ファイルが既に存在しているか
     if (readHandle) {
-        NSLog(@"output-target file already exist, we overwrite.");
+        NSLog(@"output-target file already exist, we append.");
+        result = true;
+    } else {
+        result = [fileManager createFileAtPath:path contents:nil attributes:nil];
     }
-    
-    bool result = [fileManager createFileAtPath:path contents:nil attributes:nil];
     
     NSAssert1(result, @"the output-file:%@ cannot generate or append", path);
     
     if (result) {
         m_writeHandle = [NSFileHandle fileHandleForWritingAtPath:path];
+        
+        m_writeCount = [m_writeHandle seekToEndOfFile];
+        [m_writeHandle seekToFileOffset:m_writeCount];
     }
 }
 
